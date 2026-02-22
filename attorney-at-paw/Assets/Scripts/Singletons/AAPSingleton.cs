@@ -11,13 +11,22 @@ public class AAPSingleton : MonoBehaviour
      * Dicts need to be filled with data (evidence & crappy images)
      * script needs to be placed into unity
      * 
-     * Text Crawl
+     * Text Crawl [DONE (effectively)]
      * 
      * Sprite positioning (and reactions!)
      * 
+     * 
+     * New To Do:
+     * 
+     * Script needs to be done, w/ a few added commands to introduce images
+     * Protocol to swap podiums w/camera drag
+     * Place all data into dicts
+     * FORMAT EVERYTHING IN THE UNITY SCENE
      * 
      * 
      * 
      * 
      */
+
+
 }

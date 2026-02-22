@@ -14,13 +14,23 @@ public class DialoguePanel : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text bodyText;
     [SerializeField] private GameObject headerPanel;
     [SerializeField] private TMPro.TMP_Text headerText;
+
+
+    // the events in the inspector is a Broadcaster-Only thing (listeners have listener components)
+    [Header("Events")]
+    [SerializeField] private GameEvent TextCrawlStateChange;
+    
+
     private Color32 defaultTextColour = new(255, 255, 255, 255);
     private Color32 greyTextColour = new(180, 180, 180, 255);
 
     private readonly float CHAR_INTERVAL = 0.05f;
 
-    private bool textCrawlActive = false;
-    private bool textCrawlMarkedForDeath;
+    // reminder that ink script should broadcast textCrawlStateChange(sender, true)
+    // and only input handler/this file should broadcast textCrawlStateChange(sender, false)
+    private bool textCrawlActive = false; //internally informs if textCrawl is active
+    private bool textCrawlMarkedForDeath = false; // lets textcrawl be killed at coroutine update
+
 
     //private bool isTextCrawlOn = true; //not implemented, I can implement this later, but not for the proto.
     //if text crawl is added, will have to hold an intermediate string.
@@ -57,12 +67,15 @@ public class DialoguePanel : MonoBehaviour
 
     public void SetBodyText(string bodyText)
     {
-        StartCoroutine(TextCrawl(bodyText)); //FIXXX THIS SHOULD FLIP  A SWITCH ELSEWHERE THAT TELLS SPEAKER TO CONSTANTLY MEOW WHILE ACTIVE
+        StartCoroutine(TextCrawl(bodyText)); //FIXXX THIS SHOULD FLIP
+                                             //A SWITCH ELSEWHERE THAT TELLS SPEAKER TO CONSTANTLY MEOW WHILE ACTIVE
     }
     private IEnumerator TextCrawl(string bodyText)
     {
 
         // should broadcast beginning of textcrawl FIXXXXXX
+
+        BroadcastTextCrawlStart(); // tells the audio to start occurring
 
         char[] bodyTextCharArr = bodyText.ToCharArray();
 
@@ -77,10 +90,17 @@ public class DialoguePanel : MonoBehaviour
             this.bodyText.text = sb.ToString();
 
             //if() MARKED FOR DEATH RESPONSE FIXXX
-
+            if (textCrawlMarkedForDeath)
+            {
+                break;
+            }
         }
-
-        // should broadcast end of textcrawl FIXXXXXXXX
+        if (!textCrawlMarkedForDeath) //i.e. if the textcrawl naturally finishes
+        {
+            BroadcastTextCrawlEnd();
+        }
+        this.bodyText.text = bodyText;
+        textCrawlMarkedForDeath = false;
     }
 
     /*public void SetBodyText(string bodyText)
@@ -89,6 +109,34 @@ public class DialoguePanel : MonoBehaviour
     }*/
 
 
+    // this file also listens to OnTextCrawlStateChange NO IT DOESN'T, GET OUT OF MY HEAD
+    /*
+    private void OnTextCrawlStateChange(Component sender, object data) //data expected to be bool
+    {
+        if (sender is DialoguePanel) //preferred if this file ignores its own broadcasts
+        {
+            return;
+        }
+        if (data is bool) //which, by the way, it should be
+        {
+            bool value = (bool)data;
+            if (value && )
+            {
+
+            }
+        }
+    }*/
+
+
+    // these should strt containing audio!
+    private void BroadcastTextCrawlEnd()
+    {
+        TextCrawlStateChange.Raise(this, false);
+    }
+    private void BroadcastTextCrawlStart()
+    {
+        TextCrawlStateChange.Raise(this, true);
+    }
 
 
 
