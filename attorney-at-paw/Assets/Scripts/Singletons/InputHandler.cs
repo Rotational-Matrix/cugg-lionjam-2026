@@ -10,24 +10,7 @@ public class ProtoInputHandler : MonoBehaviour
     /// <summary>
     /// [Cu]'s documentation
     /// 
-    /// Most of the documentation is actually provided below as it should be
-    /// 
-    /// What is accesible from ProtoInputHandler is abstract keys (as well as the keyboard)
-    /// 
-    /// How to add a funtions that respond to user input (esp. keypresses)
-    ///     - Most Ideal: make function in MenuInputManager and place it in its appropriate spot
-    ///         - e.g. 'eve-interact-key' should only work, say, outside of dialogue and menus,
-    ///         so its appropriate behvaiour is performed by a funtion in ProtoInputHandler and placed
-    ///         properly into the private 'DistributeInput()' method at the bottom where actions
-    ///         that only occur outside of menus and dialogue occur.
-    ///     - Also Valid: locally handle the update and keypress
-    ///         - Obviously, it can be clunky, time-consuming, and/or foolish to handle certain calls in this file
-    ///         - Conditions for locally updating and handling the keypresses
-    ///             - Please use abstractable keys. Not already here? Add it!
-    ///             - Make sure to account for call context (since, otherwise ProtoInputHandler would account for it)
-    ///                 - e.g. the beheviour must not occur whenever it shouldn't occur
-    ///                 which means that the behaviour must have a way of ascertaining its context
-    ///                 
+    /// Adapted from ToaF, the only file in AAP that should know about user input
     ///     
     /// 
     /// </summary>
@@ -68,16 +51,25 @@ public class ProtoInputHandler : MonoBehaviour
      *              - I should probably change this, but regardless, these issues are documented as they appear below
      */
     public static Key mvSelectUp = Key.UpArrow;
+    public static Key altMvSelectUp = Key.W;
+
     public static Key mvSelectDown = Key.DownArrow;
+    public static Key altMvSelectDown = Key.S;
+
+    public static Key mvSelectLeft = Key.LeftArrow;
+    public static Key altMvSelectLeft = Key.A;
+
+    public static Key mvSelectRight = Key.RightArrow;
+    public static Key altMvSelectRight = Key.D;
 
     //------------------- Pause Menu Keys ---------------------------
 
-    public static Key openConfigKey = Key.Tab;
-    public static Key exitKey = Key.Escape;
+    public static Key openConfigKey = Key.Tab; //won't do anything in AAP
+    public static Key exitKey = Key.Escape;    //won't do anything in AAP
 
     //------------------- Roam State Keys ---------------------------
 
-    public static Key interactKey = Key.Space;
+    public static Key interactKey = Key.Space; //also nothing to interact w/
 
     //--------------------- Debug Keys ------------------------------
 
@@ -95,14 +87,13 @@ public class ProtoInputHandler : MonoBehaviour
      */
     private static Key debug_forceStartDialogue = Key.RightBracket;
     private static Key debug_forceJumpDialogue = Key.O;
-    public static Key debug_moveSariel = Key.Q;
+    //public static Key debug_moveSariel = Key.Q; AUGH I WISH I HAD REMOVED THIS SOONER!
     [SerializeField] public string forceJumpKnotName;
 
 
     private void Start() //has to be start to guarantee it occurs after StateManager.Awake()
     {
-        dcManager = StateManager.DCManager;
-        pmManager = StateManager.PMManager;
+        dcManager = AAPSingleton.dcm;
     }
 
 
@@ -129,44 +120,9 @@ public class ProtoInputHandler : MonoBehaviour
 
     private void DistributeInput(Key keyPressed)
     {
-        switch (StateManager.CurrMenuType())
-        {
-            //note that this accounts
-            case StateManager.MenuInputType.SelectableGrid:
-                GridSelectHandler(keyPressed);
-                break;
-            case StateManager.MenuInputType.DirectKey:
-                DirectKeyHandler(keyPressed);
-                break;
-            case StateManager.MenuInputType.None: // if not in any menus
-                if (StateManager.GetDialogueStatus()) //if in dialogue
-                    DialogueInputHandler(keyPressed);
-
-                NotInMenuMiscHandler(keyPressed);
-                break;
-        }
+        DialogueInputHandler(keyPressed); //handles dialogue and choice states
     }
 
-
-
-    //during GridSelectableInput, other types of input are not necessarily cutoff.
-    //Note that the escape key is not currently an option to use
-    private void GridSelectHandler(Key keyPressed)
-    {
-        if (keyPressed == mvSelectUp)
-            StateManager.MenuStack.Peek().IncremElement();
-        else if (keyPressed == mvSelectDown)
-            StateManager.MenuStack.Peek().DecremElement();
-        else if (keyPressed == commitChoiceKey || keyPressed == alterCommitChoiceKey)
-            StateManager.MenuStack.Peek().ChooseSelected();
-        else if (keyPressed == exitKey)
-            StateManager.SoftExitTopMenu();
-    }
-
-    private void DirectKeyHandler(Key keyPressed)
-    {
-        StateManager.DirectInputAction(keyPressed);
-    }
 
     //all cases of non menuStack 'pseudo menus' (choice/dialogue)
     private void DialogueInputHandler(Key keyPressed)
@@ -177,35 +133,23 @@ public class ProtoInputHandler : MonoBehaviour
          *  - This is not in switchcase because the keys might be assigned to the same button (esp choose & dialogue)
          * 
          */
-
-
-        if (keyPressed == mvSelectUp) //best to filter out by key first
+        if (dcManager.IsChoiceActive())
         {
-            if (dcManager.IsChoiceActive())
-                dcManager.IncremChoiceSelection();
-        }
-        if (keyPressed == mvSelectDown)
-        {
-            if (dcManager.IsChoiceActive())
-                dcManager.DecremChoiceSelection();
-        }
-        if (keyPressed == commitChoiceKey || keyPressed == alterCommitChoiceKey)
-        {
-            if (dcManager.IsChoiceActive())
+            if (keyPressed == mvSelectUp || keyPressed == altMvSelectUp)
+                dcManager.MoveSelectorUp();
+            else if (keyPressed == mvSelectDown || keyPressed == altMvSelectDown)
+                dcManager.MoveSelectorDown();
+            else if (keyPressed == mvSelectLeft || keyPressed == altMvSelectLeft)
+                dcManager.MoveSelectorLeft();
+            else if (keyPressed == mvSelectRight || keyPressed == altMvSelectRight)
+                dcManager.MoveSelectorRight();
+            else if (keyPressed == commitChoiceKey || keyPressed == alterCommitChoiceKey)
             {
                 dcManager.Choose();
                 dcManager.AttemptContinue();
             }
-            else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey) //copout for chookey = dialogue key
-            {
-                if (!dcManager.IsChoiceActive())
-                {
-                    if (!dcManager.AttemptContinue())
-                        dcManager.InitiateChoices();
-                }
-            }
         }
-        else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey)
+        else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey) //choice cannot have started active
         {
             if (!dcManager.IsChoiceActive())
             {

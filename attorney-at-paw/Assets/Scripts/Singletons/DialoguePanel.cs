@@ -9,8 +9,6 @@ using System.Text;
 public class DialoguePanel : MonoBehaviour
 {
     // The following fields are expected to be children of the dialogue panel (or attached to children)
-    [SerializeField] private GameObject leftSprite;
-    [SerializeField] private GameObject rightSprite;
     [SerializeField] private TMPro.TMP_Text bodyText;
     [SerializeField] private GameObject headerPanel;
     [SerializeField] private TMPro.TMP_Text headerText;

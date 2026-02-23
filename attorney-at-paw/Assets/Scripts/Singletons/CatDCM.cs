@@ -22,6 +22,9 @@ public class CatDCM : MonoBehaviour
     [SerializeField] private DialoguePanel dPanel;
     [SerializeField] private ChoiceCanvas cCanvas;
 
+    [SerializeField] private CatPodium leftPodium;
+    [SerializeField] private CatPodium rightPodium;
+
     //this should be set to the compiled json asset (not the ink itself)
     public TextAsset inkAsset;
 
@@ -41,13 +44,13 @@ public class CatDCM : MonoBehaviour
     // dialogue sprites are associated with a character (of course, null ones may exist)
     private Dictionary<(GameObject, string), Sprite> dialogueSprites = new();
 
-    [SerializeField] private CatPodium leftPodium;
-    [SerializeField] private CatPodium rightPodium;
+    
 
     private void Awake()
     {
         InitInk(); // creates inkstory, and 
         SetDialogueState(true); //it automatically makes sure it is turned off at start. (YOU CAN'T LEAVE IT (AAP))
+        AAPSingleton.dcm = this;
     }
 
     // creates the inkstory whilst also properly informing the newgame save state and providing it with proper external vals
