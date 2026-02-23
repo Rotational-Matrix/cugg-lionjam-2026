@@ -7,8 +7,9 @@ using System.Text;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Windows;
 
-public class DialogueCanvasManager : MonoBehaviour
+public class CatDCM : MonoBehaviour
 {
     /// <summary>
     /// [Cu]'s Documentation
@@ -296,41 +297,31 @@ public class DialogueCanvasManager : MonoBehaviour
 
 
     /* Handle Inline Commands
-     * Upon finding an inline operator, calls the appropriate methods.
-     * In case of no inlines found, returns the same input (after all, most lines will have no inlines
-     * 
-     * This is primarily here because TMPro supports 'rich text tags' which can affect the conditions of individual words.
-     *  - rich text tags will always be misinterpreted by ink, because ink sees <~~~> as not a string
-     *  - rich text tags seem to follow the following format:
-     *      - <category=value>lorem ipsum solem dicut</category>
-     *          - note that the tag will only apply between the two parts of the tag
-     *  - our inlines will use the following format:
-     *      - $category:value$lorem ipsum solem dicut$/category$
-     *          - note that, in case a '$' is needed, the inline will turn $$ -> $
-     *          - also, odd numbers of non-$$ $ will leave the last $ as $
-     *          - inside $~~~~$, : turns to = to make sure nothing is being assigned
-     * 
-     * In general, ink seems to ignore '$,' So I intend to use this for indication of inlines (LaTeX approved)
+     * Handling rich text has been removed as a fn, '$' now used as indicator of introducing L or S
      */
     private string HandleInlineCommands(string input)
     {
         if (readAsStageLines)
-            return HandleRichText(HandleInlineSpeaker(input));
+            return HandleInlineSpeaker(input);
         else
-            return HandleRichText(input);
+            return input;
     }
+
+
+
     // new protocol is being added, expected [speaker],[character],[emotion]
     // note that if [speaker] is a character, the 2nd option need not exist (but can)
     // if [emotion] DNE, assume default.
     // will read according to number of args
     // will always have character, and no sprite will be a character
+
     private string HandleInlineSpeaker(string input)
     {
         int colonIndex = input.IndexOf(':');
         if (colonIndex == -1)
         {
             HandleSpeakerTag("NO_SPEAKER");
-            HandleSpriteTag("NONE", true);
+            //HandleSpriteTag("NONE", true); does NOT remove sprites on narration for AAP
             dPanel.GreyOutText(true);
             return "<i>" + input + "</i>";
         }
@@ -344,7 +335,7 @@ public class DialogueCanvasManager : MonoBehaviour
         {
             postColon = "<i>" + postColon + "</i>";
             dPanel.GreyOutText(true);
-            HandleSpriteTag("NONE", true);
+            //HandleSpriteTag("NONE", true); //AAP doesn't eliminate sprites via speakers
             return postColon;
         }
         string[] preColonCaps = new string[preColonArgs.Length];
@@ -352,72 +343,30 @@ public class DialogueCanvasManager : MonoBehaviour
         {
             preColonCaps[i] = preColonArgs[i].Trim().ToUpper();
         }
+        (CatObject, bool) catPosBucket;
         if (preColonArgs.Length == 1)
         {
-            CatObject bucket = CapsToCat(preColonCaps[0]);
-            HandleSpriteTag((bucket, "DEFAULT"), true); // note that it is legal for bucket to be null here
+            catPosBucket = CapsToCatExtended(preColonCaps[0]);
+            HandleSpriteTag((catPosBucket.Item1, "DEFAULT"), catPosBucket.Item2);
         }
         else if (preColonArgs.Length == 2) //then either [spkr + char],[emo] or [spkr],[char + silent default]
         {
-            CatObject bucket = CapsToCat(preColonCaps[1]);
-            if (!object.Equals(bucket, null)) // i.e. [spkr],[char + silent default]
-                HandleSpriteTag((bucket, "DEFAULT"), true);
+            catPosBucket = CapsToCatExtended(preColonCaps[1]);
+            if (!object.Equals(catPosBucket.Item1, null)) // i.e. [spkr],[char + silent default]
+                HandleSpriteTag((catPosBucket.Item1, "DEFAULT"), catPosBucket.Item2);
             else // must be [spkr + char],[emo]
             {
-                bucket = CapsToCat(preColonCaps[0]);
-                HandleSpriteTag((bucket, preColonCaps[1]), true); //bucket being null is legal here
+                catPosBucket = CapsToCatExtended(preColonCaps[0]);
+                HandleSpriteTag((catPosBucket.Item1, preColonCaps[1]), catPosBucket.Item2); //bucket being null is legal here
             }
         }
         else //assert (preColonArgs.Length == 3) // must be [spkr],[char],[emo]
         {
-            HandleSpriteTag((CapsToCat(preColonCaps[1]), preColonCaps[2]), true);
+            catPosBucket = CapsToCatExtended(preColonCaps[1]);
+            HandleSpriteTag((catPosBucket.Item1, preColonCaps[2]), catPosBucket.Item2);
         }
         dPanel.GreyOutText(false); //reverts to default
         return postColon;
-    }
-    private string HandleRichText(string input)
-    {
-        //currently only made to handle rich text, so it is handled in the main inline function
-        int i1 = input.IndexOf('$');
-        if (i1 == -1 || i1 == input.Length - 1)
-            return input; //so Handle Inline resolves quickly when no inline is present
-        //since we have at least 1 '$', we split
-        string[] s_split = input.Split('$');
-        if (s_split.Length % 2 == 0)
-            return input; //means an invalid '$' pattern occurred, in all use cases, split should be odd
-        //s_split[0] and s_split[s_split.Length-1] will be eventually concat, but otherwise ignored
-        //if a non-edge space is the string "", that means $$ occurred, and that is replaced w/$ [just one]
-        int empty_count = 0;
-        for (int i = 1; i < s_split.Length - 1; i++)
-        {
-            if (s_split[i] == "")
-                empty_count++;
-        }
-        string[] s_bucket = new string[s_split.Length - empty_count];
-        s_bucket[0] = s_split[0];
-        bool place_left_b = true;
-        for (int sp_i = 1, bu_i = 1; bu_i < s_bucket.Length; sp_i++, bu_i++)
-        {
-            if (s_split[sp_i] == "") //this is when $$ is typed for intentional '$' printing
-            {
-                if (place_left_b)
-                    s_bucket[bu_i] = string.Concat("$", s_split[sp_i + 1]);
-                else //if still in bracket clause (so : -> = must occur)
-                    s_bucket[bu_i] = string.Concat("$", s_split[sp_i + 1].Replace(':', '='));
-                sp_i++;
-            }
-            else if (place_left_b)
-            {
-                s_bucket[bu_i] = string.Concat("<", s_split[sp_i].Replace(':', '='));
-                place_left_b = false;
-            }
-            else
-            {
-                s_bucket[bu_i] = string.Concat(">", s_split[sp_i].Replace(':', '='));
-                place_left_b = true;
-            }
-        }
-        return string.Concat(s_bucket);
     }
 
 
@@ -602,6 +551,33 @@ public class DialogueCanvasManager : MonoBehaviour
         catch (KeyNotFoundException)
         {
             return null;
+        }
+    }
+
+
+    // as quick protocol, at the end of a cat name, $s affixed to end indicate extra commands
+    // for instance, Paldo$L,doom places paldo on left podium with the doom sprite (not actual sprite name prolly)
+    // so far only have $L and $R
+    private (CatObject, bool) CapsToCatExtended(string str)
+    {
+        // check for podium placement
+        int dollarIndex = str.IndexOf('$');
+        if (dollarIndex == -1)
+            return (CapsToCat(str), true); //assumes default (left)
+        else
+        {
+            string preDollar = str.Substring(0, dollarIndex).Trim(); //doesn't include the '$'
+            string postDollar = str.Substring(dollarIndex + 1).Trim();
+            bool isLeft;
+            if (postDollar[0] == 'L')
+                isLeft = true;
+            else if (postDollar[0] == 'R')
+                isLeft = false;
+            else
+            {
+                throw new ArgumentException("Invalid $-command: " + str);
+            }
+            return (CapsToCat(preDollar), isLeft);
         }
     }
 

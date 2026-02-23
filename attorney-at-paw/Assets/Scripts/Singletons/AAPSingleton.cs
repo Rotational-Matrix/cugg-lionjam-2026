@@ -20,7 +20,7 @@ public class AAPSingleton : MonoBehaviour
      * 
      * Script needs to be done, w/ a few added commands to introduce images
      * Protocol to swap podiums w/camera drag
-     * Place all data into dicts
+     * InputHandler (literally progress dialogue (space, enter) and  move selector (<^v>/WASD))
      * FORMAT EVERYTHING IN THE UNITY SCENE
      * 
      * 
