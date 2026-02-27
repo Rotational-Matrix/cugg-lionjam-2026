@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 
 public class VerDicts : ScriptableObject
@@ -86,7 +87,7 @@ public class VerDicts : ScriptableObject
             Sprite bucket = Resources.Load<Sprite>(recpath + openStr + i);
             ImageDict.Add(openKey + i, bucket);
         }
-        for (int i = 1;i <= numberOfTitleCards; i++) //these filenames are NOT 0-indexed either
+        for (int i = 1; i <= numberOfTitleCards; i++) //these filenames are NOT 0-indexed either
         {
             Sprite bucket = Resources.Load<Sprite>(recpath + titleCardStr + i);
             ImageDict.Add(titleCardKey + i, bucket);
@@ -102,8 +103,63 @@ public class VerDicts : ScriptableObject
         for (int i = 0; i < numberOfBEvidence; i++) // these filenames are 0-indexed
         {
             Sprite bucket = Resources.Load<Sprite>(recpath + i);
-            ImageDict.Add( evidenceKey + i, bucket);
-        }
+            ImageDict.Add(evidenceKey + i, bucket);
+        } //I am illegally using ImageDict here
+
+        // reminder than name calls in ink must perfectly match the keys made here
+        // 11 for part one
+        EvidenceDict.Add("Catpitalist Realism", 
+            ("\"Catpitalist Realism\" by Bark Fisher", ImageDict[evidenceKey + 0]));
+        EvidenceDict.Add("The Conquest of Wet Food", 
+            ("\"The Conquest of Wet Food\" by Pyotr Kropkitten", ImageDict[evidenceKey + 1]));
+        EvidenceDict.Add("The Wretched of the Earth",
+            ("\"The Wretched of the Earth\" by Frantz Feline", ImageDict[evidenceKey + 2]));
+
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 3]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 4]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 5]));
+
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 6]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 7]));
+
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 0]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 1]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 2]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 3]));
+
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 4]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 5]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 6]));
+        EvidenceDict.Add("EVIDENCE_NAME",
+            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 7]));
+
+        EvidenceDict.Add("TREAT", ("It's actually a dog treat, " +
+            "but seeing as you're lying about your law degree, I don't think you're going to care", null));
+        EvidenceDict.Add("MOUSE", ("One of those extravagant ones with thumb buttons for gaming laptops", null));
+        EvidenceDict.Add("BIRD", ("Common Raven: When Activated, discard 1 egg from any of your birds " +
+            "to gain 2 of any food from the supply (it's a good card)", null));
+        EvidenceDict.Add("YARN", ("It's silk yarn, it deals 2 masks of damage with each attack", null));
+        EvidenceDict.Add("PET", ("An IOU for a Paldo-administered petting session " +
+            "(does not specify if it can be used to be pet by paldo or the other way around)", null));
+
+
+
+
+
+
+
     }
 
 

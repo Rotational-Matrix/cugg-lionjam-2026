@@ -33,7 +33,7 @@ public class CutScene : MonoBehaviour
             0
             );
         fullscreenImage1.color = new1clr;
-
+        AAPSingleton.cutScene = this;
     }
 
     private void Update()

@@ -27,6 +27,7 @@ public class AAPSingleton : MonoBehaviour
      * 
      */
     public static CatDCM dcm;
-
+    public static InputHandler inputHandler;
+    public static CutScene cutScene;
 
 }

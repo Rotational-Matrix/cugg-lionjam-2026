@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
-public class ProtoInputHandler : MonoBehaviour
+public class InputHandler : MonoBehaviour
 {
     /// <summary>
     /// [Cu]'s documentation
@@ -16,6 +16,7 @@ public class ProtoInputHandler : MonoBehaviour
     /// </summary>
 
     private CatDCM dcManager;
+    private bool mrg = true; //master regulatory gene
 
 
     // PLEASE: observe unity inputManager 1.15 (or any version, really)
@@ -100,12 +101,13 @@ public class ProtoInputHandler : MonoBehaviour
     private void Awake()
     {
         CurrentKeyboard = UnityEngine.InputSystem.Keyboard.current;
+        AAPSingleton.inputHandler = this;
     }
 
     //------------------ The Update function ------------------------
     private void Update()
     {
-        if (CurrentKeyboard.anyKey.wasPressedThisFrame)
+        if (CurrentKeyboard.anyKey.wasPressedThisFrame && mrg)
         {
             foreach (KeyControl key in Keyboard.current.allKeys)
             {
@@ -116,6 +118,11 @@ public class ProtoInputHandler : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ForceInputActive(bool value)
+    {
+        mrg = value;
     }
 
     private void DistributeInput(Key keyPressed)

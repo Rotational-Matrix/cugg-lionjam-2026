@@ -57,7 +57,8 @@ public class CatDCM : MonoBehaviour
     private void InitInk()
     {
         _inkStory = new Story(inkAsset.text);
-
+        colonLineCommands.Add("SET_INPUT", SetInputCmd);
+        colonLineCommands.Add("CUTSCENE", CutSceneCmd);
         /*
         colonLineCommands.Add("FORCED_MOVE", ForcedMoveCmd);
         colonLineCommands.Add("AUTOSAVE", AutosaveCmd);
@@ -73,6 +74,24 @@ public class CatDCM : MonoBehaviour
         colonLineCommands.Add("ENDING", EndingCmd);
         colonLineCommands.Add("BACKDOOR", BackdoorCmd);
         */
+    }
+
+    private bool SetInputCmd(string[] argv)
+    {
+        if (argv.Length != 2)
+            return false;
+        AAPSingleton.inputHandler.ForceInputActive(CapsToBool(argv[1]));
+        return true;
+    }
+    private bool CutSceneCmd(string[] argv)
+    {
+        if (argv.Length != 2)
+            return false;
+        if (string.Equals(argv[1], "CLEAR"))
+            AAPSingleton.cutScene.ClearCutScenes();
+        else
+            AAPSingleton.cutScene.InitiateCutScene(VerDicts.ImageDict[argv[1]]);
+        return true;
     }
     
 

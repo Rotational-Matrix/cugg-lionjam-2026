@@ -42,7 +42,13 @@ public class EvidenceOption : MonoBehaviour
                 currEvidenceName = evidenceName;
                 evidenceNameTextBox.text = evidenceName;
                 flavourPanel.SetFlavourText(evidenceData.Item1);
-                evidenceSR.sprite = evidenceData.Item2;
+                if (object.Equals(evidenceData.Item2, null))
+                    evidenceSR.gameObject.SetActive(false); //this isn't the best move to do, but time necessitates
+                else
+                {
+                    evidenceSR.sprite = evidenceData.Item2;
+                    evidenceSR.gameObject.SetActive(true);
+                }
                 optionPanel.SetActive(true);
             }
             catch (KeyNotFoundException)

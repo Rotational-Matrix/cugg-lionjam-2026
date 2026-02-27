@@ -13,6 +13,8 @@ using UnityEngine;
 
 //ink will give mere array of 'choices' which will just be evidence names (legitimate evidence names in VerDicts)
 
+
+//note that boxes may place their names behind their images
 public class ChoiceCanvas : MonoBehaviour
 {
     [SerializeField] private List<EvidenceOption> evidenceOptions = new List<EvidenceOption>();
