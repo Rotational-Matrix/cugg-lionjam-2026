@@ -127,23 +127,23 @@ public class VerDicts : ScriptableObject
         EvidenceDict.Add("EVIDENCE_NAME",
             ("FLAVOUR_TEXT", ImageDict[evidenceKey + 7]));
 
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 0]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 1]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 2]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 3]));
+        EvidenceDict.Add("Micheal",
+            ("Micheal (Very common name)", ImageDict[evidenceKey + 0]));
+        EvidenceDict.Add("Waldo",
+            ("Waldo (Like Paldo but only cause it kinda rhymes)", ImageDict[evidenceKey + 1]));
+        EvidenceDict.Add("Paldo",
+            ("Paldo (This is your real name)", ImageDict[evidenceKey + 2]));
+        EvidenceDict.Add("Forgery is wrong, actually",
+            ("Forgery is wrong, actually (Loser)", ImageDict[evidenceKey + 3]));
 
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 4]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 5]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 6]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 7]));
+        EvidenceDict.Add("Claw",
+            ("Claw (Not to be confused with 'Prowlers Claw')", ImageDict[evidenceKey + 4]));
+        EvidenceDict.Add("Paw",
+            ("Paw (That's actually kind of cute!)", ImageDict[evidenceKey + 5]));
+        EvidenceDict.Add("Law",
+            ("Law (This feels like a tautology)", ImageDict[evidenceKey + 6]));
+        EvidenceDict.Add("EVIDENCE_NAME", ("Maw (Not to be confused with--actually " +
+            "I should stop making league references)", ImageDict[evidenceKey + 7]));
 
         EvidenceDict.Add("TREAT", ("It's actually a dog treat, " +
             "but seeing as you're lying about your law degree, I don't think you're going to care", null));

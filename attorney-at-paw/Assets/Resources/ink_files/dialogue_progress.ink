@@ -81,54 +81,86 @@ PALDO: Luckily, I’ve been doing the readings from Kittsburgh’s Core Curricul
  + [Catpitalist Realism] //FV: "Catpitalist Realism" by Bark Fisher
     CHAIRCAT: The failure to imagine any alternative to Catpitalism is not a pressing issue within Pawnsylvania, is it? That system is entirely outmoded here. 
     CHAIRCAT: And in any case, what does this have to do with state highways? Enough of this.
-    An invisible hand (pictured above) is making rather unkind gestures for choosing such a book, and it guides Paldo out of the room.
+    An invisible hand (pictured above) is making rather unkind gestures for choosing such a book, and it guides Paldo out of the room. {fail()}
     -> failed_part_1
  + [The Conquest of Wet Food] //FV: "The Conquest of Wet Food" by Pyotr Kropkitten
     CHAIRCAT: Anarchism is a nonsensical system, but your portrayal of this highway as unnecessary given the plenty already established within Pawnsylvania rings true. Please, continue.
     -> p1_2
  + [The Wretched of the Earth] // FV: 
     CHAIRCAT: You seem to misunderstand the purpose of Feline’s work. It adapts Barxist theory to the colonial situation, and its aim is precisely to remedy the ills of that situation. 
-    CHAIRCAT: I do not think that the Manichaeism of the colonial world that Feline asserts is actually present here. Please, take your seat.
+    CHAIRCAT: I do not think that the Manichaeism of the colonial world that Feline asserts is actually present here. Please, take your seat. {fail()}
     -> failed_part_1
  - (p1_2) SELECT A FAMOUS CAT'S THOUGHT TO SUPPORT YOUR COMPLAINT.
- + [Lev Trotskitty]
-    
- + [Michel Foucat]
- 
- + [Meow Tse-Tung]
-
+ + [Lev Trotskitty] //FV: Lev Trotskitty FIXXXXX
+    CHAIRCAT: I suppose it is not in keeping with the spirit of permanent revolution to allow for the expropriation of land at the expense of working cats. 
+    CHAIRCAT: And what a head of hair on that Trotskitty! What more do you have to say?
+    -> p1_3
+ + [Michel Foucat] //FV: PLS ADD! FIXXX
+    Foucat was bald. As such, I cannot respect him. No more of this tripe. {fail()}
+    -> failed_part_1
+ + [Meow Tse-Tung] //FV: PLS ADD! FIXXX
+    Tse-Tung’s haircut was atrocious, no matter how effective his work. I do not take lessons from the bald. I’ll hear not a word more from you. {fail()}
+    -> failed_part_1
 
 - (p1_3) SELECT A LIBERAL TO SUPPORT YOUR COMPLAINT.
-+ [John Locke But Like The Cat Version]
++ [John Locke But Like The Cat Version] //FV: John Locke But Like The Cat Version (Feels like a natural answer)
+    CHAIRCAT: I disagree with him on nearly every point, but I’ve always appreciated <i>John Locke But Like The Cat Version</i> for his having seven names. 
+    CHAIRCAT: I feel biased today. I like JLBLTCV, and I like you as a result. What is your name?
+    -> p1_4
+    
++ [Thomas Hobbes] //FV: Thomas Hobbes (For some reason, you're imagining a giant cat sovereign made up of tiny little cats)
+    CHAIRCAT: Hobbes is a scary tiger. Though I’m sympathetic to your complaint, I shudder at your invoking him. Please, spare yourself the trouble, and return to your seat.
+    A stuffed tiger approaches Paldo and reveals the Chaircat is an extention of the sovereign power, to whom Paldo has implicitly transferred his rights, so he should just accept this injusice. {fail()}
+    -> failed_part_1
 
-+ [Thomas Hobbes]
 
 - (p1_4) SELECT A FAKE NAME FOR YOUR FAKE LAW DEGREE.
 + [Micheal] // FV: Micheal (Very common name)
-
+    CHAIRCAT: It’s spelled ‘Michael’, you know. 
+    CHAIRCAT: If you’re forging a law degree, make sure you can spell the name on it. {fail()}
+    -> failed_part_1
 + [Waldo] //FV: Waldo (Like Paldo but only cause it kinda rhymes)
-
+    CHAIRCAT: That’s my name. I don’t buy it for a second. {fail()}
+    -> failed_part_1
 + [Paldo] //FV: Paldo (This is your real name)
-
+    CHAIRCAT: Hey, you’re name’s Paldo?! My name’s Waldo! That’s like Paldo but only kinda cause it rhymes! I’ll help you on these grounds alone!
 + [Forgery is wrong, actually] //FV: Forgery is wrong, actually (Loser)
-
+    CHAIRCAT: This is your law degree? 
+    CHAIRCAT: Your name is ‘Forgery is wrong, actually’?
+    CHAIRCAT: Your last name is ‘actually’?
+    CHAIRCAT: <i>in lowercase?</i> 
+    CHAIRCAT: At least try to be convincing. {fail()}
+    -> failed_part_1
 
 - (p1_5) SELECT AN INSTRUMENT WITH WHICH TO CREATE YOUR FAKE LAW DEGREE.
-+ [Claw] //FV: Claw (not to be confused with 'Prowlers Claw')
++ [Claw] //FV: Claw (Not to be confused with 'Prowlers Claw')
+    CHAIRCAT: This “degree” has been scratched up and down. It’s more hole than surface. Are you even trying to forge a law degree? {fail()}
+    -> failed_part_1
++ [Paw] //FV: Paw (That's actually kind of cute!)
+    CHAIRCAT: This is a finger painting. I take it you’re not a real lawyer, are you? {fail()}
+    -> failed_part_1
++ [Law] //FV: Law (This feels like a tautology)
+    CHAIRCAT: Well, the degree says “LAW” on it in big letters. I’m convinced!
+    -> p_1_done
 
-+ [Paw] //FV: Paw (that's actually kind of cute!)
-
-+ [Law] //FV: Law (this feels like a tautology)
-
-+ [Maw] //FV: Maw (not to be confused with--actually I should stop making league references)
-
- 
++ [Maw] //FV: Maw (Not to be confused with--actually I should stop making league references)
+    CHAIRCAT: You can’t simply claim you “eated your law degree”. I just saw it.
+    CHAIRCAT: It said “Paldo”, remember? 
+    CHAIRCAT: We all know they just taste a little too salty to eat, anyway.
+    CHAIRCAT: Well, that’s what I’ve heard. 
+    CHAIRCAT: I’ve never tried to eat my law degree. 
+    CHAIRCAT: Anyway, you can leave.
+    How insensitive! What if you were a real lawyer and had in fact eated your law degree? {fail()}
+    -> failed_part_1
  
  - (p_1_done) CHAIRCAT: Well, Paldo, I’m happy to have you come back to speak on the issue before the Catsoviet in a week. Hopefully we can get this highway cleared up.
 >>> CUTSCENE:TCARD_2
 Part 2...
 >>> CUTSCENE:CLEAR
+-> part_2
 
+
+=== part_2 ===
  - (p_2)
  ~ temp i = 0
 It's speech making time!
@@ -136,17 +168,17 @@ Or, really, it's bribe making time! (Paldo is not a lawyer)
 SELECT 20 ITEMS TO BRIB-*cough* PIECES OF EVIDENCE TO GIVE TO A PUBLIC OFFICIAL
 Box contains:
  - (p_2_mid_puzzle)
- + [TREAT] <> TREAT
+ + [TREAT]
     ~ treatNum = treatNum + 1
- + [MOUSE] <> MOUSE
+ + [MOUSE]
     ~ mouseNum = mouseNum + 1
- + [BIRD] <> BIRD
+ + [BIRD]
     ~ birdNum = birdNum + 1
- + [YARN] <> YARN
+ + [YARN]
     ~ yarnNum = yarnNum + 1
- + [PET] <> PET
+ + [PET]
     ~ petNum = petNum + 1
- - <>, 
+ - -> pseudo_looper ->
  {i < 20:
     ~ i = i + 1
     -> p_2_mid_puzzle
@@ -160,8 +192,8 @@ Box contains:
  CHAIRCAT: I mean to say that cuteness is not a substitute for quality or completeness, in any capacity. 
  CHAIRCAT: Something is not of quality simply because it has cat puns—I have seen many a rushed product fail to realize this, and put out something sub-par hoping that the cuteness involved would mask its low quality. But it never can. 
  CHAIRCAT: But, good try given the time you had, I guess.
- CHAIRCAT: I could actually  really go for some {needMoreStr}
-
+ CHAIRCAT: I could actually really go for some {needMoreStr} {fail()}
+-> failed_part_2
  
  === VICTORY_TIME ===
  
@@ -182,7 +214,7 @@ Box contains:
  
  >>> SET_INPUT:FALSE
  NO_SPEAKER:New ending unlocked: THAT'S RIGHT, THIS IS PALDO's PURR-FECT VICTORY
-
+-> pseudo_end
  
 
 
@@ -277,6 +309,7 @@ Box contains:
  >>> BLORBUS:SORROW_AND_LAMENT // I was personally thinking to either spam a bunch of blorbi on the screen, or to make half of the sprites on screen become blorbus
  NO_SPEAKER:New ending unlocked: Curiosity Killed The Cat
  }
+ -> part_2
  
  
  
@@ -296,24 +329,80 @@ Box contains:
  ~ victory = (currentOffset <= leeway)
  ~ temp t0 = treatIdeal - treatNum
  ~ temp t1 = treatStr
- {t0 < mouseNum - mouseIdeal: 
-    ~ t0 = mouseNum - mouseIdeal
+ {t0 < mouseIdeal - mouseNum: 
+    ~ t0 = mouseIdeal - mouseNum
     ~ t1 = mouseStr
  }
- {t0 < birdNum - birdIdeal: 
-    ~ t0 = birdNum - birdIdeal
+ {t0 < birdIdeal - birdNum: 
+    ~ t0 = birdIdeal - birdNum
     ~ t1 = birdStr
  }
- {t0 < yarnNum - yarnIdeal: 
-    ~ t0 = yarnNum - yarnIdeal
+ {t0 < yarnIdeal - yarnNum: 
+    ~ t0 = yarnIdeal - yarnNum
     ~ t1 = yarnStr
  }
- {t0 < petNum - petIdeal: 
-    ~ t0 = petNum - petIdeal
+ {t0 < petIdeal - petNum: 
+    ~ t0 = petIdeal - petNum
     ~ t1 = petStr
  }
+ ~ treatNum = 0
+ ~ mouseNum = 0
+ ~ birdNum = 0
+ ~ yarnNum = 0
+ ~ petNum = 0
  ~ needMoreStr = t1
  
+ === function fail()
+ (<b>FAILURE</b>)
  
  
+ === function display_box()
+ Box Contains: 
+ 
+ 
+ === pseudo_looper ===
+ NO_SPEAKER: Box contains: 
+ ~ temp pseu_i = 0
+ - (trt)
+ {pseu_i < treatNum:
+    <> TREAT,
+    ~ pseu_i = pseu_i + 1
+    -> trt
+ }
+ ~ pseu_i = 0
+ - (mse)
+ {pseu_i < mouseNum:
+    <> MOUSE,
+    ~ pseu_i = pseu_i + 1
+    -> mse
+ }
+ ~ pseu_i = 0
+ - (brd)
+ {pseu_i < birdNum:
+    <> BIRD,
+    ~ pseu_i = pseu_i + 1
+    -> brd
+ }
+ ~ pseu_i = 0
+ - (yrn)
+ {pseu_i < yarnNum:
+    <> YARN,
+    ~ pseu_i = pseu_i + 1
+    -> yrn
+ }
+ ~ pseu_i = 0
+ - (pt)
+ {pseu_i < petNum:
+    <> PET,
+    ~ pseu_i = pseu_i + 1
+    -> pt
+ }
+ ->-> //this is a tunnel
+ 
+ 
+ 
+
+
+
+
  
