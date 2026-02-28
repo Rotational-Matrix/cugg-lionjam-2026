@@ -9,8 +9,8 @@ public class EvidenceOption : MonoBehaviour
     [SerializeField] private GameObject optionPanel;
     [SerializeField] private FlavourPanel flavourPanel; //panel that arises upon selection.
     [SerializeField] private GameObject selectorImage; // should be a child of the Choice box panel
-    [SerializeField] private SpriteRenderer evidenceSR; // associated image, obtained from scriptable object
-    [SerializeField] private TMPro.TMP_Text evidenceNameTextBox;
+    [SerializeField] private UnityEngine.UI.Image evidenceSR; // misnamed, but no difference
+    [SerializeField] private TMPro.TMP_Text evidenceNameTextBox; //only active if no sprite
 
 
     private string currEvidenceName = ""; //acts as ID for current held object.
@@ -43,11 +43,15 @@ public class EvidenceOption : MonoBehaviour
                 evidenceNameTextBox.text = evidenceName;
                 flavourPanel.SetFlavourText(evidenceData.Item1);
                 if (object.Equals(evidenceData.Item2, null))
+                { 
                     evidenceSR.gameObject.SetActive(false); //this isn't the best move to do, but time necessitates
+                    evidenceNameTextBox.gameObject.SetActive(true);
+                }
                 else
                 {
                     evidenceSR.sprite = evidenceData.Item2;
                     evidenceSR.gameObject.SetActive(true);
+                    evidenceNameTextBox.gameObject.SetActive(false);
                 }
                 optionPanel.SetActive(true);
             }

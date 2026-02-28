@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem.EnhancedTouch;
 
 
-public class VerDicts : ScriptableObject
+public class VerDicts : MonoBehaviour //ScriptableObject I'll learn scriptable objects later I guess...
 {
     readonly int numberOfOpeningScenes = 18;
     readonly int numberOfTitleCards = 3;
@@ -26,7 +26,7 @@ public class VerDicts : ScriptableObject
     public static Dictionary<(string,string), Sprite> CatSprites { private set; get; }
     */
 
-    private void Awake()
+    private void Awake() //swapped from Awake
     {
         InstantiateCatData();
         InstantiateImageData();
@@ -93,6 +93,7 @@ public class VerDicts : ScriptableObject
             ImageDict.Add(titleCardKey + i, bucket);
         }
         ImageDict.Add(closeKey, Resources.Load<Sprite>(recpath + closeStr));
+        ImageDict.Add("BLORBUS", Resources.Load<Sprite>(recpath + "CUTSCENE_BLORBUS"));
     }
 
 
@@ -115,17 +116,17 @@ public class VerDicts : ScriptableObject
         EvidenceDict.Add("The Wretched of the Earth",
             ("\"The Wretched of the Earth\" by Frantz Feline", ImageDict[evidenceKey + 2]));
 
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 3]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 4]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 5]));
+        EvidenceDict.Add("Lev Trotskitty",
+            ("Lev Trotskitty (His idea of a “World Revolution but Everyone is Cats” has always rung true)", ImageDict[evidenceKey + 3])); //FIXXX
+        EvidenceDict.Add("Michel Foucat",
+            ("Michel Foucat (As you look around, you notice that the Pawnopticon is well-implemented in this chamber)", ImageDict[evidenceKey + 4])); //FIXXX
+        EvidenceDict.Add("Meow Tse-Tung",
+            ("Meow Tse-Tung (The bane of the Clawmintang)", ImageDict[evidenceKey + 5]));
 
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 6]));
-        EvidenceDict.Add("EVIDENCE_NAME",
-            ("FLAVOUR_TEXT", ImageDict[evidenceKey + 7]));
+        EvidenceDict.Add("John Locke But Like The Cat Version",
+            ("John Locke But Like The Cat Version (Feels like a natural answer)", ImageDict[evidenceKey + 6]));
+        EvidenceDict.Add("Thomas Hobbes",
+            ("Thomas Hobbes (For some reason, you're imagining a giant cat sovereign made up of little cats)", ImageDict[evidenceKey + 7]));
 
         EvidenceDict.Add("Micheal",
             ("Micheal (Very common name)", ImageDict[evidenceKey + 0]));
@@ -142,7 +143,7 @@ public class VerDicts : ScriptableObject
             ("Paw (That's actually kind of cute!)", ImageDict[evidenceKey + 5]));
         EvidenceDict.Add("Law",
             ("Law (This feels like a tautology)", ImageDict[evidenceKey + 6]));
-        EvidenceDict.Add("EVIDENCE_NAME", ("Maw (Not to be confused with--actually " +
+        EvidenceDict.Add("Maw", ("Maw (Not to be confused with--actually " +
             "I should stop making league references)", ImageDict[evidenceKey + 7]));
 
         EvidenceDict.Add("TREAT", ("It's actually a dog treat, " +

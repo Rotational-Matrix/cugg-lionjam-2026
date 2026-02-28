@@ -14,6 +14,7 @@ public class CatObject : object
     public CatObject(string name)
     {
         this.name = name;
+        SpriteDict = new Dictionary<string, Sprite>();
     }
 
 

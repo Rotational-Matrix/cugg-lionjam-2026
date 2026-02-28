@@ -14,9 +14,12 @@ public class InputHandler : MonoBehaviour
     ///     
     /// 
     /// </summary>
+    /// 
+    public int num_post_Attempt_Continues = 0;
 
     private CatDCM dcManager;
     private bool mrg = true; //master regulatory gene
+    private bool textCrawlActive = false;
 
 
     // PLEASE: observe unity inputManager 1.15 (or any version, really)
@@ -153,12 +156,16 @@ public class InputHandler : MonoBehaviour
             else if (keyPressed == commitChoiceKey || keyPressed == alterCommitChoiceKey)
             {
                 dcManager.Choose();
-                dcManager.AttemptContinue();
+                Debug.Log("present in Choose area for input handler, Num_post_attempt_cont: " + num_post_Attempt_Continues);
+                for (int i = 0; i < num_post_Attempt_Continues; i++)
+                    dcManager.AttemptContinue();
             }
         }
         else if (keyPressed == dialogueKey || keyPressed == alterDialogueKey) //choice cannot have started active
         {
-            if (!dcManager.IsChoiceActive())
+            if (textCrawlActive)
+                dcManager.EndTextCrawl();
+            else if (!dcManager.IsChoiceActive())
             {
                 if (!dcManager.AttemptContinue())
                     dcManager.InitiateChoices();
@@ -166,7 +173,14 @@ public class InputHandler : MonoBehaviour
         }
     }
 
-
+    //if true is sent, text crawl actived, if false is sent, text crawl inactived
+    public void OnTextCrawlStateChange(Component sender, object data) //data expected to be bool
+    {
+        if (data is bool) //which, by the way, it should be
+        {
+            textCrawlActive = (bool)data;
+        }
+    }
 
 
 

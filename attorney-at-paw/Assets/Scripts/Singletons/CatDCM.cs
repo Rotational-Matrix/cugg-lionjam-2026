@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Presets;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -22,8 +23,8 @@ public class CatDCM : MonoBehaviour
     [SerializeField] private DialoguePanel dPanel;
     [SerializeField] private ChoiceCanvas cCanvas;
 
-    [SerializeField] private CatPodium leftPodium;
-    [SerializeField] private CatPodium rightPodium;
+    //[SerializeField] private CatPodium leftPodium;
+    //[SerializeField] private CatPodium rightPodium;
 
     //this should be set to the compiled json asset (not the ink itself)
     public TextAsset inkAsset;
@@ -52,6 +53,10 @@ public class CatDCM : MonoBehaviour
         SetDialogueState(true); //it automatically makes sure it is turned off at start. (YOU CAN'T LEAVE IT (AAP))
         AAPSingleton.dcm = this;
     }
+    private void Start()
+    {
+        AttemptContinue();
+    }
 
     // creates the inkstory whilst also properly informing the newgame save state and providing it with proper external vals
     private void InitInk()
@@ -59,6 +64,9 @@ public class CatDCM : MonoBehaviour
         _inkStory = new Story(inkAsset.text);
         colonLineCommands.Add("SET_INPUT", SetInputCmd);
         colonLineCommands.Add("CUTSCENE", CutSceneCmd);
+        colonLineCommands.Add("PUT", PutCmd);
+        colonLineCommands.Add("DOOM", DoomCmd);
+        colonLineCommands.Add("MV", MvCmd);
         /*
         colonLineCommands.Add("FORCED_MOVE", ForcedMoveCmd);
         colonLineCommands.Add("AUTOSAVE", AutosaveCmd);
@@ -86,14 +94,86 @@ public class CatDCM : MonoBehaviour
     private bool CutSceneCmd(string[] argv)
     {
         if (argv.Length != 2)
+        {
             return false;
+        }
+
         if (string.Equals(argv[1], "CLEAR"))
+        {
             AAPSingleton.cutScene.ClearCutScenes();
+        }
         else
+        {
             AAPSingleton.cutScene.InitiateCutScene(VerDicts.ImageDict[argv[1]]);
+        }
         return true;
     }
-    
+    private bool PutCmd(string[] argv)
+    {
+        // PUT:<cat-name>,<L/R>,<emotion>
+        if (argv.Length < 3 || argv.Length > 4)
+            return false;
+        CatObject catObj = CapsToCat(argv[1]);
+        CatPodium catPod;
+        if (string.Equals(argv[2], "L"))
+            catPod = AAPSingleton.catPodL;
+        else if (string.Equals(argv[2], "R"))
+            catPod = AAPSingleton.catPodR;
+        else
+            return false;
+        if (object.Equals(catObj,null))
+        {
+            catPod.TimeCrunchSetCatSprite(null, false);
+            return true;
+        }
+
+        string emoteKey;
+        Sprite sprite;
+        if (argv.Length == 4) //meaning emotion was used
+            emoteKey = argv[3];
+        else // meaning emotion wasn't used
+            emoteKey = "DEFAULT";
+        try
+        {
+            sprite = catObj.SpriteDict[emoteKey];
+        }
+        catch (KeyNotFoundException)
+        {
+            return false;
+        }
+        bool isPaldoSized = object.Equals(catObj, VerDicts.CatDict["PALDO"]); // only paldo is paldo sized rn
+
+        catPod.TimeCrunchSetCatSprite(sprite, isPaldoSized);
+        return true;
+    }
+
+    private bool DoomCmd(string[] argv) //shortcut cmd
+    {
+        string emote = CapsToBool(argv[1]) ? "DOOM" : "DEFAULT";
+        string[] strArr = { "PUT", "PALDO", "L", emote };
+        PutCmd(strArr);
+        return true;
+    }
+
+    private bool MvCmd(string[] argv)
+    {
+        //MV:<L/R>
+        if (argv.Length != 2)
+            return false;
+        CameraMvr camMvr = AAPSingleton.cameraMvr;
+        switch (argv[1])
+        {
+            case "L":
+                camMvr.MoveCamera(true);
+                break;
+            case "R":
+                camMvr.MoveCamera(false);
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
 
     public void ResponseToLoadSave()
     {
@@ -122,7 +202,10 @@ public class CatDCM : MonoBehaviour
     }
 
 
-
+    public bool EndTextCrawl()
+    {
+        return dPanel.InstantKillTextCrawl(); //returns true on success
+    }
 
     //attempts to continue and returns if it failed.
     //this is done because we may desire to allow choice selection at this point
@@ -222,11 +305,15 @@ public class CatDCM : MonoBehaviour
     private bool ContinueDialogue()
     {
         string parsedText = ParseCommands(intermediateBodyText);
-        if (!Equals(parsedText, null)) //null is passed by ParseCommands for line commands
+        if (!(Equals(parsedText, null) || Equals(parsedText, ""))) //null is passed by ParseCommands for line commands
         {
             HandleLineTags(); //note that line tags are handled after all actions of ParseCommands
-            dPanel.AttemptProgressDialogue(parsedText, currHeader);
-            PlacePodiumSprites(currLeftPodiumSprite, currRightPodiumSprite);
+            if (!dPanel.AttemptProgressDialogue(parsedText, currHeader))
+            {
+                Debug.Log("ContinueDialogue Attempt Progress block triggered! " + parsedText);
+                dPanel.AttemptProgressDialogue(parsedText, currHeader);
+            }
+            //PlacePodiumSprites(currLeftPodiumSprite, currRightPodiumSprite);
             return true;
         }
         else
@@ -234,11 +321,12 @@ public class CatDCM : MonoBehaviour
         //AAP: Dialogue can't stop won't stop
 
     }
+    /*
     private void PlacePodiumSprites(Sprite leftPodSpr, Sprite rightPodSpr)
     {
         leftPodium.SetCatSprite(leftPodSpr);
         rightPodium.SetCatSprite(rightPodSpr);
-    }
+    }*/
 
     private string ParseCommands(string input)
     {
@@ -277,6 +365,7 @@ public class CatDCM : MonoBehaviour
     //returns success at handling command
     private bool LineColonCommands(string command)
     {
+        //Debug.Log("Debugger: " + command); //DEBUGGER PLS KILL FIXXX
         //protocol for these line commands are: COMMAND:ARG1,ARG2,ARG3,...,ARGN
         //all parts of any command are expected to be case insensitive
         int colonIndex = command.IndexOf(':'); // should != -1
@@ -494,10 +583,12 @@ public class CatDCM : MonoBehaviour
     }
     private void HandleSpriteTag(Sprite sprite, bool isLeft)
     {
-        if (isLeft)
+        /*
+         if (isLeft)
             currLeftPodiumSprite = sprite;
         else
             currRightPodiumSprite = sprite;
+        */ //lobotomised this fn bc it is handled elsewhere!
     }
     //this last overload 
     private void HandleSpriteTag((CatObject, string) key, bool isLeft)

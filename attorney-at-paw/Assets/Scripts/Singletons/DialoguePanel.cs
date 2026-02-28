@@ -12,7 +12,7 @@ public class DialoguePanel : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text bodyText;
     [SerializeField] private GameObject headerPanel;
     [SerializeField] private TMPro.TMP_Text headerText;
-
+    private Coroutine textCrawlCoroutine;
 
     // the events in the inspector is a Broadcaster-Only thing (listeners have listener components)
     [Header("Events")]
@@ -20,15 +20,13 @@ public class DialoguePanel : MonoBehaviour
     
 
     private Color32 defaultTextColour = new(255, 255, 255, 255);
-    private Color32 greyTextColour = new(180, 180, 180, 255);
+    private Color32 greyTextColour = new(255, 255, 255, 255); //new (180, 180, 180, 255); not grey!
 
     private readonly float CHAR_INTERVAL = 0.05f;
 
     // reminder that ink script should broadcast textCrawlStateChange(sender, true)
     // and only input handler/this file should broadcast textCrawlStateChange(sender, false)
-    private bool textCrawlActive = false; //internally informs if textCrawl is active
-    private bool textCrawlMarkedForDeath = false; // lets textcrawl be killed at coroutine update
-
+    private string coroutineOnCreationText;
 
     //private bool isTextCrawlOn = true; //not implemented, I can implement this later, but not for the proto.
     //if text crawl is added, will have to hold an intermediate string.
@@ -48,9 +46,8 @@ public class DialoguePanel : MonoBehaviour
     //overloaded version in case one wants to ignore the Sprites
     public bool AttemptProgressDialogue(string bodyText, string headerText)
     {
-        if (textCrawlActive)
+        if (InstantKillTextCrawl())
         {
-            textCrawlMarkedForDeath = true;
             return false;
         }
         else
@@ -59,20 +56,19 @@ public class DialoguePanel : MonoBehaviour
             SetHeaderText(headerText);
             return true;
         }
-
     }
 
 
     public void SetBodyText(string bodyText)
     {
-        StartCoroutine(TextCrawl(bodyText)); //FIXXX THIS SHOULD FLIP
+        textCrawlCoroutine = StartCoroutine(TextCrawl(bodyText)); //FIXXX THIS SHOULD FLIP
                                              //A SWITCH ELSEWHERE THAT TELLS SPEAKER TO CONSTANTLY MEOW WHILE ACTIVE
     }
     private IEnumerator TextCrawl(string bodyText)
     {
 
         // should broadcast beginning of textcrawl FIXXXXXX
-
+        coroutineOnCreationText = bodyText; //added only to prevent edgecase.
         BroadcastTextCrawlStart(); // tells the audio to start occurring
 
         char[] bodyTextCharArr = bodyText.ToCharArray();
@@ -83,23 +79,63 @@ public class DialoguePanel : MonoBehaviour
         //time progresses regardless of menu state, but backdrop being on or not is not that big of a deal
         for(int i = 0; i < bodyTextCharArr.Length; i++)
         {
+            if (bodyTextCharArr[i] == '<') //rich text incoming
+            {
+                int richTextLen = LengthToIncludeChar(bodyTextCharArr, i, '>');
+                if (richTextLen != -1)
+                {
+                    sb.Append(bodyTextCharArr, i, richTextLen);
+                    i += richTextLen; //to basically skip all said cycles
+                    if (i == bodyTextCharArr.Length)
+                    {
+                        break; // since the end has already been hit
+                    }
+                }
+                
+            }
             yield return new WaitForSeconds(CHAR_INTERVAL);
             sb.Append(bodyTextCharArr[i]);
             this.bodyText.text = sb.ToString();
+        }
+        TextCrawlEndBehavior();
+    }
 
-            //if() MARKED FOR DEATH RESPONSE FIXXX
-            if (textCrawlMarkedForDeath)
+    private void TextCrawlEndBehavior()
+    {
+        BroadcastTextCrawlEnd();
+        this.bodyText.text = coroutineOnCreationText;
+        textCrawlCoroutine = null;
+    }
+
+    //killing on update was foolish.
+    public bool InstantKillTextCrawl()
+    {
+        if (textCrawlCoroutine != null)
+        {
+            StopCoroutine(textCrawlCoroutine);
+            TextCrawlEndBehavior();
+            return true;
+        }
+        return false;
+    }
+
+    //the text crawl looks really stupid whenever I put in rich text, this solves that
+    //returns the number of characters including the one at currIndex to the one at sought
+    // e.g. let arr be a char array: qz<i>xw, then
+    //      LengthToIncludeChar(arr, 2, '>') -> outputs 3 (bc it is referrring to '<','i','>')
+    private int LengthToIncludeChar(char[] arr, int currIndex, char sought)
+    {
+        int found = -1;
+        for (int i = 1;  i < arr.Length - currIndex; i++) //length of 0 not permitted
+        {
+            if(arr[currIndex + i] == sought)
             {
+                found = i + 1; //bc it has to return number of characters inclusive
                 break;
             }
         }
-        if (!textCrawlMarkedForDeath) //i.e. if the textcrawl naturally finishes
-        {
-            BroadcastTextCrawlEnd();
-        }
-        this.bodyText.text = bodyText;
-        textCrawlMarkedForDeath = false;
-    }
+        return found;
+    } // FUTURE REFERENCE: Array.IndexOf() is a function!
 
     /*public void SetBodyText(string bodyText)
     {

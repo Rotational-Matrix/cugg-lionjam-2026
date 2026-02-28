@@ -29,5 +29,10 @@ public class AAPSingleton : MonoBehaviour
     public static CatDCM dcm;
     public static InputHandler inputHandler;
     public static CutScene cutScene;
+    public static CameraMvr cameraMvr;
+    public static CatPodium catPodL;
+    public static CatPodium catPodR;
+    //public VerDicts verDicts;
+
 
 }
